@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\Anime;
+use App\Models\Review;
+use DB;
+
+class AnimeController extends Controller
+{
+    /**
+     * Show all the animes.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function list()
+    {
+        $animes = DB::select("SELECT * FROM animes");
+        return view('welcome', ["animes" => $animes]);
+    }
+
+    public function select($id) 
+    {
+        $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
+        return view('anime', ["anime" => $anime]);
+    }
+
+    public function new_review($id) {
+        $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
+        return view("new_review",["anime" => $anime]);
+    }
+
+    public function create_review($anime_id, Request $request) 
+    {
+        if (Auth::check() === false) 
+        {
+            return redirect()->intended('/login');
+        }
+        $validated = $request->validate([
+        "rating" => "required",
+        "comment" => "required"
+        ]);
+        $review = new Review();
+        $review->user_id = Auth::user()->id;
+        $review->anime_id = $anime_id;
+        $review->rating = $validated["rating"];
+        $review->comment = $validated["comment"];
+        $review->save();
+        return redirect('/');
+    }
+}

@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use App\Models\Anime;
+use App\Http\Controllers\AnimeController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,59 +18,37 @@ use App\Models\User;
 |
 */
 
-Route::get('/', function () {
-  $animes = DB::select("SELECT * FROM animes");
-  return view('welcome', ["animes" => $animes]);
-});
+// we use the list method of the class AnimeController
+// to list all the anime(s)
+Route::get('/', [AnimeController::class, 'list']);
 
-Route::get('/anime/{id}', function ($id) {
-  $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
-  return view('anime', ["anime" => $anime]);
-});
+// we use the select method of the class AnimeController
+// to view a specific anime
+Route::get('/anime/{id}', [AnimeController::class,'select']);
 
-Route::get('/anime/{id}/new_review', function ($id) {
-  return view('new_review');
-});
+// we use the create_review method of the class AnimeController
+// to create a review of an anime
+Route::get('/anime/{id}/new_review', [AnimeController::class,'new_review']);
 
-Route::get('/login', function () {
-  return view('login');
-});
+Route::post('/anime/{id}/new_review', [AnimeController::class,'create_review']);
 
-Route::post('/login', function (Request $request) {
-  $validated = $request->validate([
-    "username" => "required",
-    "password" => "required",
-  ]);
-  if (Auth::attempt($validated)) {
-    return redirect()->intended('/');
-  }
-  return back()->withErrors([
-    'username' => 'The provided credentials do not match our records.',
-  ]);
-});
+// we use the login method of the class UserController
+// to log in 
+Route::get('/login', [UserController::class,'login']); 
 
-Route::get('/signup', function () {
-  return view('signup');
-});
+// we use the check_login method of the class UserController
+// to validate the user trying to log in
+Route::post('/login', [UserController::class,'check_login']); 
 
-Route::post('signup', function (Request $request) {
-  $validated = $request->validate([
-    "username" => "required",
-    "password" => "required",
-    "password_confirmation" => "required|same:password"
-  ]);
-  $user = new User();
-  $user->username = $validated["username"];
-  $user->password = Hash::make($validated["password"]);
-  $user->save();
-  Auth::login($user);
+// we use the signup method of the class UserController
+// to create an account 
+Route::get('/signup', [UserController::class,'signup']); 
 
-  return redirect('/');
-});
+// we use the check_signup method of the class UserController
+// to validate the account
+Route::post('/signup', [UserController::class,'check_signup']); 
 
-Route::post('signout', function (Request $request) {
-  Auth::logout();
-  $request->session()->invalidate();
-  $request->session()->regenerateToken();
-  return redirect('/');
-});
+// we use the signout method of the class UserController
+// to disconnect the user 
+Route::post('/signout', [UserController::class,'signout']); 
+
