@@ -31,11 +31,17 @@ Route::get('/anime/{id}', [AnimeController::class,'select']);
 // to sort the animes 
 Route::get('/top', [AnimeController::class,'top']);
 
-// we use the create_review method of the class AnimeController
-// to create a review of an anime
+// we use the new_review method of the class AnimeController
+// to display the form for typing a review
 Route::get('/anime/{id}/new_review', [AnimeController::class,'new_review']);
 
+// we use the create_review method of the class AnimeController
+// to create a review of an anime
 Route::post('/anime/{id}/new_review', [AnimeController::class,'create_review']);
+
+Route::post('/anime/{id}/add_to_watch_list',[AnimeController::class,'add_to_watch_list']);
+
+Route::get('/watchlist',[AnimeController::class,'display_watch_list']);
 
 // we use the login method of the class UserController
 // to log in 

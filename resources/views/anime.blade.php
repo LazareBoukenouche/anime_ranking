@@ -14,7 +14,7 @@
     </header>
 
     <aside>
-    <span>@if ($anime->hasReviewUserId)
+    <span>@if ($has_review)
       <h2> {{$rating }}</h2>
     @endif</span></aside>
     
@@ -22,10 +22,10 @@
     <div>
       <div class="actions">
         <div>
-        @if ($anime->hasReviewUserId)
+        @if ($has_review)
         
           <a class="cta" href="/anime/{{ $anime->id }}/modify_review">Modifier critique</a>
-          <!-- {{ $anime->hasReviewUserId}} -->
+          
         @else
         <a class="cta" href="/anime/{{ $anime->id }}/new_review">Écrire une critique</a>
         @endif
@@ -33,8 +33,23 @@
         
           
         </div>
+        
+          
+          @if (Auth::check())
+            @if ($in_watchlist)
+          <form action="/anime/{{ $anime->id }}/delete_from_watch_list" method="POST">
+            @csrf
+              <button class="cta">Retirer de ma watchlist</button>
+          </form>    
+            @else
         <form action="/anime/{{ $anime->id }}/add_to_watch_list" method="POST">
-          <button class="cta">Ajouter à ma watchlist</button>
+          @csrf
+            <button class="cta">Ajouter à ma watchlist</button>
+        </form>
+            @endif
+          @else
+            <a class="cta" href="/login">Ajouter à ma watchlist</a>
+          @endif
         </form>
       </div>
     </div>
