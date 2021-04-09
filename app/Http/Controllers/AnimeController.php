@@ -22,6 +22,17 @@ class AnimeController extends Controller
         return view('welcome', ["animes" => $animes]);
     }
 
+    public function top()
+    {
+        // $rating = DB::select("SELECT AVG(rating) AS rating FROM review ORDER BY rating ASC");
+        $animes = DB::select("SELECT animes.*,AVG(rating) AS rating
+        FROM animes 
+        JOIN review ON animes.id = review.anime_id
+        GROUP BY animes.id, title, description, cover, updated_at, created_at
+        ORDER BY rating DESC");
+        return view('top', ["animes" => $animes]);
+    }
+
     public function select($id) 
     {
         $anime = DB::select("SELECT animes.*,review.id AS hasReviewUserId FROM animes

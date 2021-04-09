@@ -26,6 +26,11 @@ Route::get('/', [AnimeController::class, 'list']);
 // to view a specific anime
 Route::get('/anime/{id}', [AnimeController::class,'select']);
 
+
+// we use the sort method of the class AnimeController
+// to sort the animes 
+Route::get('/top', [AnimeController::class,'top']);
+
 // we use the create_review method of the class AnimeController
 // to create a review of an anime
 Route::get('/anime/{id}/new_review', [AnimeController::class,'new_review']);
