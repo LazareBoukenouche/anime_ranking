@@ -24,21 +24,33 @@ class AnimeController extends Controller
 
     public function select($id) 
     {
-        $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
+        $anime = DB::select("SELECT animes.*,review.id AS hasReviewUserId FROM animes
+        LEFT JOIN review ON review.anime_id = animes.id AND review.user_id = ?
+        WHERE animes.id = ?",[Auth::user()->id, $id])[0];
+
+        // $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
         return view('anime', ["anime" => $anime]);
+
+        
+        
     }
 
     public function new_review($id) {
-        $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
-        return view("new_review",["anime" => $anime]);
-    }
 
-    public function create_review($anime_id, Request $request) 
-    {
         if (Auth::check() === false) 
         {
             return redirect()->intended('/login');
         }
+
+        $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
+        return view("new_review",["anime" => $anime]);
+
+        
+    }
+
+    public function create_review($anime_id, Request $request) 
+    {
+        
         $validated = $request->validate([
         "rating" => "required",
         "comment" => "required"

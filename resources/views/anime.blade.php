@@ -14,7 +14,15 @@
     <div>
       <div class="actions">
         <div>
-          <a class="cta" href="/anime/{{ $anime->id }}/new_review">Écrire une critique</a>
+        @if ($anime->hasReviewUserId)
+          <a class="cta" href="/anime/{{ $anime->id }}/modify_review">Modifier critique</a>
+          <!-- {{ $anime->hasReviewUserId}} -->
+        @else
+        <a class="cta" href="/anime/{{ $anime->id }}/new_review">Écrire une critique</a>
+        @endif
+  
+        
+          
         </div>
         <form action="/anime/{{ $anime->id }}/add_to_watch_list" method="POST">
           <button class="cta">Ajouter à ma watchlist</button>
