@@ -28,8 +28,10 @@ class AnimeController extends Controller
         LEFT JOIN review ON review.anime_id = animes.id AND review.user_id = ?
         WHERE animes.id = ?",[Auth::user()->id, $id])[0];
 
+        $rating = DB::select("SELECT AVG(rating) AS rating FROM review WHERE anime_id = ?",[$id])[0]->rating;
+
         // $anime = DB::select("SELECT * FROM animes WHERE id = ?", [$id])[0];
-        return view('anime', ["anime" => $anime]);
+        return view('anime', ["anime" => $anime,"rating" =>round($rating)]);
 
         
         
