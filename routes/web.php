@@ -39,8 +39,12 @@ Route::get('/anime/{id}/new_review', [AnimeController::class,'new_review']);
 // to create a review of an anime
 Route::post('/anime/{id}/new_review', [AnimeController::class,'create_review']);
 
+// we use the add_to_watch_list method of the class AnimeController
+// to add an anime to the watchlist of the user
 Route::post('/anime/{id}/add_to_watch_list',[AnimeController::class,'add_to_watch_list']);
 
+// we use the display_watch_list method of the class AnimeController
+// to display the watchlist
 Route::get('/watchlist',[AnimeController::class,'display_watch_list']);
 
 // we use the login method of the class UserController

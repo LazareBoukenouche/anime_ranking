@@ -19,11 +19,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\View\View
      */
+
+    // display the login template
     public function login()
     {
         return view('login');
     }
 
+    // Validate the login form and log the user if valid
     public function check_login(Request $request)
     {
         $validated = $request->validate([
@@ -38,11 +41,13 @@ class UserController extends Controller
               ]);
     }
 
+    // display the signup template
     public function signup()
     {
         return view('signup');
     }
 
+    // add a new user to the database
     public function check_signup (Request $request) 
     {
           $validated = $request->validate([
@@ -59,6 +64,7 @@ class UserController extends Controller
           return redirect('/');
     }
 
+    // disconnect the user
     public function signout (Request $request) 
     {
           Auth::logout();

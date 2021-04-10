@@ -23,6 +23,8 @@ class AnimeController extends Controller
         return view('welcome', ["animes" => $animes]);
     }
 
+    // List the anime by their rating
+    // we calculate the rating with SQL with the AVG() function
     public function top()
     {
         // $rating = DB::select("SELECT AVG(rating) AS rating FROM review ORDER BY rating ASC");
@@ -34,22 +36,28 @@ class AnimeController extends Controller
         return view('top', ["animes" => $animes]);
     }
 
+    // we select an anime
     public function select($id) 
     {
         $anime = DB::select("SELECT * FROM animes
         WHERE id = ?",[$id])[0];
+
+        // variables used to check if the user has created a review or added
+        // an anime to his watchlist
         $has_review = false;
         $in_watchlist = false;
 
         if (Auth::user()) {
-            // check if the user has reviewed the anime
+            
             $review = DB::select("SELECT * FROM review WHERE user_id = ? AND anime_id = ?",[Auth::user()->id,$id]);
             
+            // check if the user has reviewed the anime
             $has_review = (count($review) > 0);
             
-            // check if the user has added the anime to his watchlist
+           
             $watchlist = DB::select("SELECT * FROM watchlist WHERE user_id = ? AND anime_id = ?",[Auth::user()->id,$id]);
-        
+            
+            // check if the user has added the anime to his watchlist
             $in_watchlist = (count($watchlist) > 0);
         }
         
@@ -65,6 +73,8 @@ class AnimeController extends Controller
         
     }
 
+    // display the form for creating a new review if the user is connected
+    // else we redirect to the login page
     public function new_review($id) {
 
         if (Auth::check() === false) 
@@ -78,6 +88,7 @@ class AnimeController extends Controller
         
     }
 
+    // add the new reveiw in the database
     public function create_review($anime_id, Request $request) 
     {
         
@@ -94,16 +105,8 @@ class AnimeController extends Controller
         return redirect('/');
     }
 
-    // public function new_watch_list() 
-    // {
-    //     if (Auth::check() === false) 
-    //     {
-    //         return redirect()->intended('/login');
-    //     }
-        
-    //     return view("new_watch_list");
-    // }
-
+    
+    // add an anime to the watchlist
     public function add_to_watch_list($id, Request $request) 
     {
         
@@ -115,11 +118,13 @@ class AnimeController extends Controller
         return redirect("/anime/$id");
     }
 
+    // delete an anime from the watchlist
     public function delete_from_watch_list($id, Request $request) 
     {
 
     }
 
+    // display the watchlist in the "watchlist" template
     public function display_watch_list()
     {
         $animes = DB::select("SELECT * FROM watchlist 
